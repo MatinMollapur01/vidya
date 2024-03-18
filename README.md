@@ -14,8 +14,16 @@ Vidya Notes is a sleek and intuitive note-taking app designed to help you organi
 
 ## Screenshots
 
-![Screenshot 1](screenshots/screenshot1.png)
-![Screenshot 2](screenshots/screenshot2.png)
+![image](https://github.com/MatinMollapur01/vidya_note/assets/127895108/ddbb3a33-9b37-43fa-8945-d4a9764c2caa)
+
+![image](https://github.com/MatinMollapur01/vidya_note/assets/127895108/b71deb00-5468-47fc-aefc-d03ca3c81b93)
+
+![image](https://github.com/MatinMollapur01/vidya_note/assets/127895108/3fe4b39b-800f-45a0-b2da-895a58cd3d09)
+
+![image](https://github.com/MatinMollapur01/vidya_note/assets/127895108/f3db8477-a926-4165-a7b2-16e241c5e941)
+
+![image](https://github.com/MatinMollapur01/vidya_note/assets/127895108/5870a519-f386-4172-ad84-b5698400ed4f)
+
 
 ## Installation
 
