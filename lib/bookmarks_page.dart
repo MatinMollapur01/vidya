@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class BookmarksPage extends StatefulWidget {
   final List<String> bookmarkedNotes;
 
-  BookmarksPage({List<String>? bookmarkedNotes})
-        : this.bookmarkedNotes = bookmarkedNotes ?? const [];
+  BookmarksPage({required this.bookmarkedNotes});
 
   @override
   _BookmarksPageState createState() => _BookmarksPageState();

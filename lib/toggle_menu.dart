@@ -1,5 +1,3 @@
-// toggle_menu.dart
-
 import 'package:flutter/material.dart';
 import 'settings.dart';
 import 'bookmarks_page.dart';
@@ -7,7 +5,7 @@ import 'bookmarks_page.dart';
 class ToggleMenu extends StatelessWidget {
   final List<String> bookmarkedNotes;
 
-  ToggleMenu({this.bookmarkedNotes = const []}); // Default to an empty list
+  ToggleMenu({required this.bookmarkedNotes}); // Receive bookmarkedNotes list
 
   @override
   Widget build(BuildContext context) {
