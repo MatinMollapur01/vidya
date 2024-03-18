@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'edit_screen.dart';
 import 'toggle_menu.dart';
@@ -16,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Vidya Notes'),
+        title: Text('Vidya'),
         actions: [
           IconButton(
             icon: Icon(Icons.menu),
