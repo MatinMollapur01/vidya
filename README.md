@@ -1,4 +1,4 @@
-# Vidya Notes
+# Vidya
 
 Vidya Notes is a sleek and intuitive note-taking app designed to help you organize your thoughts and ideas effortlessly. With its user-friendly interface and powerful features, Vidya Notes makes it easy to create, edit, and manage your notes on the go.
 
