@@ -29,7 +29,7 @@ Vidya Notes is a sleek and intuitive note-taking app designed to help you organi
 
 1. Clone the repository to your local machine:
 
-git clone [https://github.com/your-username/vidya-notes.git](https://github.com/MatinMollapur01/vidya_note.git)
+git clone [https://github.com/MatinMollapur01/vidya_note.git](https://github.com/MatinMollapur01/vidya_note.git)
 
 
 2. Navigate to the project directory:
