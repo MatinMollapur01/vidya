@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatefulWidget {
+  final Function(bool) toggleDarkMode;
+
+  const SettingsScreen({Key? key, required this.toggleDarkMode}) : super(key: key);
+
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _darkModeEnabled = false; // Initial value for dark mode
+  late bool _darkModeEnabled;
+
+  @override
+  void initState() {
+    super.initState();
+    _darkModeEnabled = false; // Initialize with false
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onChanged: (value) {
           setState(() {
             _darkModeEnabled = value;
-            // You can implement dark mode functionality here
+            widget.toggleDarkMode(value);
           });
         },
       ),

@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'edit_screen.dart';
 import 'toggle_menu.dart';
 import 'database_helper.dart';
+import 'settings.dart';
 
 class HomeScreen extends StatefulWidget {
+  final Function(bool) toggleDarkMode;
+
+  const HomeScreen({Key? key, required this.toggleDarkMode}) : super(key: key);
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -36,7 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ToggleMenu()),
+                MaterialPageRoute(
+                  builder: (context) => ToggleMenu(
+                    toggleDarkMode: widget.toggleDarkMode,
+                  ),
+                ),
               );
             },
           ),
@@ -51,7 +60,9 @@ class _HomeScreenState extends State<HomeScreen> {
             title: Text(note.title),
             subtitle: Text(note.description),
             trailing: IconButton(
-              icon: Icon(note.isBookmarked ? Icons.bookmark : Icons.bookmark_border),
+              icon: Icon(
+                note.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+              ),
               onPressed: () async {
                 final dbHelper = DatabaseHelper.instance;
                 final updatedNote = Note(
