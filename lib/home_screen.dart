@@ -15,6 +15,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Note> _notes = [];
+  List<Note> _filteredNotes = [];
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -27,6 +29,17 @@ class _HomeScreenState extends State<HomeScreen> {
     final allNotes = await dbHelper.getNotes();
     setState(() {
       _notes = allNotes;
+      _filteredNotes = allNotes;
+    });
+  }
+
+  void _filterNotes(String query) {
+    setState(() {
+      _filteredNotes = _notes
+          .where((note) =>
+              note.title.toLowerCase().contains(query.toLowerCase()) ||
+              note.description.toLowerCase().contains(query.toLowerCase()))
+          .toList();
     });
   }
 
@@ -51,50 +64,71 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: _notes.length,
-        itemBuilder: (context, index) {
-          final note = _notes[index];
-
-          return ListTile(
-            title: Text(note.title),
-            subtitle: Text(note.description),
-            trailing: IconButton(
-              icon: Icon(
-                note.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Search',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
               ),
-              onPressed: () async {
-                final dbHelper = DatabaseHelper.instance;
-                final updatedNote = Note(
-                  id: note.id,
-                  title: note.title,
-                  description: note.description,
-                  content: note.content,
-                  isBookmarked: !note.isBookmarked,
+              onChanged: _filterNotes,
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _filteredNotes.length,
+              itemBuilder: (context, index) {
+                final note = _filteredNotes[index];
+
+                return ListTile(
+                  title: Text(note.title),
+                  subtitle: Text(note.description),
+                  trailing: IconButton(
+                    icon: Icon(
+                      note.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                    ),
+                    onPressed: () async {
+                      final dbHelper = DatabaseHelper.instance;
+                      final updatedNote = Note(
+                        id: note.id,
+                        title: note.title,
+                        description: note.description,
+                        content: note.content,
+                        isBookmarked: !note.isBookmarked,
+                      );
+                      await dbHelper.updateNote(updatedNote);
+                      setState(() {
+                        _notes[_notes.indexWhere((n) => n.id == note.id)] =
+                            updatedNote;
+                        _filteredNotes[index] = updatedNote;
+                      });
+                    },
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => EditScreen(note: note)),
+                    ).then((_) {
+                      _loadNotes();
+                    });
+                  },
+                  onLongPress: () async {
+                    final dbHelper = DatabaseHelper.instance;
+                    await dbHelper.deleteNote(note.id!);
+                    setState(() {
+                      _notes.remove(note);
+                      _filteredNotes.remove(note);
+                    });
+                  },
                 );
-                await dbHelper.updateNote(updatedNote);
-                setState(() {
-                  _notes[index] = updatedNote;
-                });
               },
             ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => EditScreen(note: note)),
-              ).then((_) {
-                _loadNotes();
-              });
-            },
-            onLongPress: () async {
-              final dbHelper = DatabaseHelper.instance;
-              await dbHelper.deleteNote(note.id!);
-              setState(() {
-                _notes.remove(note);
-              });
-            },
-          );
-        },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
