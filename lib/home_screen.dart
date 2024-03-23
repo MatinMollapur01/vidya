@@ -1,8 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'edit_screen.dart';
 import 'toggle_menu.dart';
-import 'bookmarks_page.dart'; // Import bookmarks_page.dart
+import 'database_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -10,8 +9,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<String> notes = ['Note 1', 'Note 2', 'Note 3']; // Dummy notes for now
-  List<String> bookmarkedNotes = []; // List to store bookmarked notes
+  List<Note> _notes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotes();
+  }
+
+  Future<void> _loadNotes() async {
+    final dbHelper = DatabaseHelper.instance;
+    final allNotes = await dbHelper.getNotes();
+    setState(() {
+      _notes = allNotes;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,52 +34,52 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: Icon(Icons.menu),
             onPressed: () {
-              // Open toggle menu
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ToggleMenu(bookmarkedNotes: bookmarkedNotes)),
+                MaterialPageRoute(builder: (context) => ToggleMenu()),
               );
             },
           ),
         ],
       ),
       body: ListView.builder(
-        itemCount: notes.length,
+        itemCount: _notes.length,
         itemBuilder: (context, index) {
-          final note = notes[index];
-          final isBookmarked = bookmarkedNotes.contains(note);
+          final note = _notes[index];
 
           return ListTile(
-            title: Text(note),
+            title: Text(note.title),
+            subtitle: Text(note.description),
             trailing: IconButton(
-              icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_border),
-              onPressed: () {
+              icon: Icon(note.isBookmarked ? Icons.bookmark : Icons.bookmark_border),
+              onPressed: () async {
+                final dbHelper = DatabaseHelper.instance;
+                final updatedNote = Note(
+                  id: note.id,
+                  title: note.title,
+                  description: note.description,
+                  content: note.content,
+                  isBookmarked: !note.isBookmarked,
+                );
+                await dbHelper.updateNote(updatedNote);
                 setState(() {
-                  if (isBookmarked) {
-                    bookmarkedNotes.remove(note);
-                  } else {
-                    bookmarkedNotes.add(note);
-                  }
+                  _notes[index] = updatedNote;
                 });
               },
             ),
             onTap: () {
-              // Navigate to edit screen to edit note
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => EditScreen(note: note)),
-              ).then((value) {
-                if (value != null && value is String) {
-                  setState(() {
-                    notes[index] = value;
-                  });
-                }
+              ).then((_) {
+                _loadNotes();
               });
             },
-            onLongPress: () {
-              // Delete note
+            onLongPress: () async {
+              final dbHelper = DatabaseHelper.instance;
+              await dbHelper.deleteNote(note.id!);
               setState(() {
-                notes.removeAt(index);
+                _notes.remove(note);
               });
             },
           );
@@ -75,16 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to edit screen to create new note
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => EditScreen(note: '')),
-          ).then((value) {
-            if (value != null && value is String) {
-              setState(() {
-                notes.add(value);
-              });
-            }
+            MaterialPageRoute(builder: (context) => EditScreen()),
+          ).then((_) {
+            _loadNotes();
           });
         },
         child: Icon(Icons.add),

@@ -3,10 +3,6 @@ import 'settings.dart';
 import 'bookmarks_page.dart';
 
 class ToggleMenu extends StatelessWidget {
-  final List<String> bookmarkedNotes;
-
-  ToggleMenu({required this.bookmarkedNotes}); // Receive bookmarkedNotes list
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +26,7 @@ class ToggleMenu extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => BookmarksPage(bookmarkedNotes: bookmarkedNotes)), // Pass bookmarkedNotes list
+                  MaterialPageRoute(builder: (context) => BookmarksPage()),
                 );
               },
               child: const Text('Bookmarks'),
