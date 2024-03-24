@@ -111,8 +111,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           id: note.id,
                           title: note.title,
                           description: note.description,
-                          content: note.content,
                           isBookmarked: !note.isBookmarked,
+                          attachments: note.attachments,
                         );
                         await dbHelper.updateNote(updatedNote);
                         setState(() {
