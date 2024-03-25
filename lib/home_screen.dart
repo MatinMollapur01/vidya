@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'edit_screen.dart';
 import 'toggle_menu.dart';
 import 'database_helper.dart';
-import 'settings.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(bool) toggleDarkMode;
@@ -112,7 +111,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           title: note.title,
                           description: note.description,
                           isBookmarked: !note.isBookmarked,
-                          attachments: note.attachments,
                         );
                         await dbHelper.updateNote(updatedNote);
                         setState(() {

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -30,50 +29,17 @@ class DatabaseHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT,
         description TEXT,
-        isBookmarked INTEGER,
-        attachments TEXT
+        isBookmarked INTEGER
       )
     ''');
   }
 
-  Future<String> _getExternalStoragePath() async {
-    final directory = await getExternalStorageDirectory();
-    return directory!.path;
-  }
-
-  Future<String> _saveAttachments(List<Object> attachments) async {
-    final externalStoragePath = await _getExternalStoragePath();
-    final attachmentPaths = <String>[];
-
-    for (final attachment in attachments) {
-      if (attachment is XFile) {
-        final fileExtension = extension(attachment.path);
-        final supportedExtensions = ['.jpg', '.png', '.webp', '.pdf', '.doc', '.docx', '.ppt', '.pptx', '.zip'];
-
-        if (supportedExtensions.contains(fileExtension.toLowerCase())) {
-          final newFilePath = join(externalStoragePath, '${attachment.name}$fileExtension');
-          await attachment.saveTo(newFilePath);
-          attachmentPaths.add(newFilePath);
-        }
-      }
-    }
-
-    return attachmentPaths.join(',');
-  }
-
-  Future<List<String>> _getAttachmentPaths(String attachmentsString) async {
-    final attachmentPaths = attachmentsString.split(',');
-    return attachmentPaths;
-  }
-
   Future<void> insertNote(Note note) async {
     final db = await instance.database;
-    final attachmentsString = await _saveAttachments(note.attachments);
     await db.insert('notes', {
       'title': note.title,
       'description': note.description,
       'isBookmarked': note.isBookmarked ? 1 : 0,
-      'attachments': attachmentsString,
     });
   }
 
@@ -83,14 +49,12 @@ class DatabaseHelper {
 
     final notes = <Note>[];
     for (final map in maps) {
-      final attachmentPaths = await _getAttachmentPaths(map['attachments'] as String);
       notes.add(
         Note(
           id: map['id'] as int?,
           title: map['title'] as String,
           description: map['description'] as String,
           isBookmarked: map['isBookmarked'] == 1,
-          attachments: attachmentPaths.cast<Object>(),
         ),
       );
     }
@@ -99,14 +63,12 @@ class DatabaseHelper {
 
   Future<void> updateNote(Note note) async {
     final db = await instance.database;
-    final attachmentsString = await _saveAttachments(note.attachments);
     await db.update(
       'notes',
       {
         'title': note.title,
         'description': note.description,
         'isBookmarked': note.isBookmarked ? 1 : 0,
-        'attachments': attachmentsString,
       },
       where: 'id = ?',
       whereArgs: [note.id],
@@ -128,14 +90,12 @@ class Note {
   final String title;
   final String description;
   final bool isBookmarked;
-  final List<Object> attachments;
 
   Note({
     this.id,
     required this.title,
     required this.description,
     required this.isBookmarked,
-    required this.attachments,
   });
 
   Map<String, dynamic> toMap() {
